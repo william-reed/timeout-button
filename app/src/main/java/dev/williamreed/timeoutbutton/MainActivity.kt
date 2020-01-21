@@ -17,7 +17,9 @@ class MainActivity : AppCompatActivity() {
         timeoutDisposable = timeout.timeoutOccurred
             .subscribe { Toast.makeText(this, "Timeout occurred", Toast.LENGTH_LONG).show() }
 
-        reset.setOnClickListener { timeout.start() }
+        start.setOnClickListener { timeout.start() }
+
+        clear.setOnClickListener { timeout.reset() }
     }
 
     override fun onDestroy() {

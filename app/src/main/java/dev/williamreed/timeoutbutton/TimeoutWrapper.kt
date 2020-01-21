@@ -119,10 +119,15 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
      * Start the animation. If it is already running, it is cleared
      */
     fun start() {
+        // if we are already running, reset it
         if (started && sized) reset()
+
+        // reset state
         started = true
-        if (!sized) return
         canceled = false
+
+        // can't start until sized properly
+        if (!sized) return
 
         // Measure the path
         val measure = PathMeasure(path, false)
@@ -141,11 +146,14 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
      * Reset the progress animation
      */
     fun reset() {
+        started = false
         animator?.cancel()
         animator = ObjectAnimator.ofFloat(this, "phase", PHASE_START, PHASE_END).apply {
             duration = this@TimeoutWrapper.animationDurationMs.toLong()
             interpolator = DecelerateInterpolator(this@TimeoutWrapper.decelerateFactor)
         }
+        // manually set phase
+        setPhase(PHASE_START)
     }
 
     /**
