@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaryColor">@color/sky_blue</color>
+    <color name="primaryLightColor">#6d9eff</color>
+    <color name="primaryDarkColor">#0046b5</color>
+    <color name="primaryTextColor">#ffffff</color>
+
+    <color name="snow_white">#FFFFFF</color>
+    <color name="busright_blue">#07255B</color>
+    <color name="busright_blue_secondary">#333F64</color>
+
+    <color name="off_white">#EAEDF3</color>
+    <color name="sky_blue">#2270E8</color>
+    <color name="sky_blue_light">#5598FF</color>
+    <color name="pale_blue">#B2D0FD</color>
+    <color name="barely_blue">#E7F0FF</color>
+
+    <color name="school_bus_yellow">#F9C33D</color>
+
+    <color name="stop_sign_red">#F15546</color>
+    <color name="warn_red">#e75841</color>
+    <color name="dull_red">#ffcfca</color>
+    <color name="dull_orange">#f1a841</color>
+    <color name="dull_green">#D2ECCF</color>
+    <color name="light_green">#5Fc673</color>
+
+    <color name="charcoal_black">#292929</color>
+    <color name="dark_gray">#4A4A4A</color>
+    <color name="gray_blue">#47506C</color>
+    <color name="light_gray">#757575</color>
+    <color name="barely_gray">#ddd</color>
+    <color name="white_smoke">#F5F5F5</color>
+</resources>

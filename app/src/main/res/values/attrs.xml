@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TimeoutButton">
+        <attr name="progressColor" format="color" />
+        <attr name="progressPadding" format="dimension" />
+        <attr name="progressPaddingTop" format="dimension" />
+        <attr name="progressPaddingLeft" format="dimension" />
+        <attr name="progressPaddingBottom" format="dimension" />
+        <attr name="progressPaddingRight" format="dimension" />
+        <attr name="progressRadius" format="dimension" />
+        <attr name="progressAnimationDurationMs" format="integer" />
+        <attr name="progressDecelerateFactor" format="float" />
+        <attr name="progressStrokeWidth" format="dimension" />
+    </declare-styleable>
+</resources>

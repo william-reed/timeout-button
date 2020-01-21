@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--    <FrameLayout-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content">-->
+
+    <!--        <com.google.android.material.button.MaterialButton-->
+    <!--            android:id="@+id/button"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:elevation="2dp"-->
+    <!--            android:text="button"-->
+    <!--            android:layout_gravity="center" />-->
+
+    <!--        <dev.williamreed.timeoutbutton.ProgressRectangleView-->
+    <!--            android:id="@+id/path"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent"-->
+    <!--            android:elevation="5dp"-->
+    <!--            android:paddingLeft="0dp"-->
+    <!--            android:paddingTop="6dp"-->
+    <!--            android:paddingRight="0dp"-->
+    <!--            android:paddingBottom="5.8dp"-->
+    <!--            android:layout_gravity="center" />-->
+
+
+    <!--    </FrameLayout>-->
+
+<!--    <dev.williamreed.timeoutbutton.TimeoutButton-->
+<!--        android:id="@+id/timeout"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:padding="6dp"-->
+<!--        app:progressColor="@color/dark_gray"-->
+<!--        app:progressPaddingBottom="5.8dp"-->
+<!--        app:progressRadius="3dp"-->
+<!--        app:progressStrokeWidth="3dp"-->
+<!--        app:progressAnimationDurationMs="10000"-->
+<!--        app:progressPaddingTop="5.8dp">-->
+
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="bus" />-->
+<!--    </dev.williamreed.timeoutbutton.TimeoutButton>-->
+
+    <dev.williamreed.timeoutbutton.MaterialTimeoutButton
+        android:id="@+id/timeout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="bus" />
+    </dev.williamreed.timeoutbutton.MaterialTimeoutButton>
+
+</FrameLayout>
