@@ -4,10 +4,10 @@ import android.content.Context
 import android.util.AttributeSet
 
 /**
- * A [TimeoutButton] except it has default padding / settings for material buttons
+ * A [TimeoutWrapper] except it has default padding / settings for material buttons
  */
-class MaterialTimeoutButton @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
-    TimeoutButton(context, attrs, defStyle) {
+class MaterialTimeoutWrapper @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
+    TimeoutWrapper(context, attrs, defStyle) {
 
     init {
         // these settings seem to be best to 'cover' a material button. might change with updates.

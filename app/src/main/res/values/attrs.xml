@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="TimeoutButton">
+    <declare-styleable name="TimeoutWrapper">
         <attr name="progressColor" format="color" />
         <attr name="progressPadding" format="dimension" />
         <attr name="progressPaddingTop" format="dimension" />

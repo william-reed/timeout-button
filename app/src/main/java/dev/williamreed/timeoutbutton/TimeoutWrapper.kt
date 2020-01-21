@@ -13,9 +13,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.children
 
 /**
- * Timeout Button
+ * Timeout Wrapper
  *
- * Expects a button as a child view. Note this view iteself is _not_ a button. It expects a child
+ * Wraps a button with a progress indicator showing a particular timeout
+ *
+ * Expects a button as a child view. Note this view itself is _not_ a button. It expects a child
  * to be a button. This view simply facilitates drawing the progress animation over (or under) the
  * button.
  *
@@ -24,7 +26,7 @@ import androidx.core.view.children
  * probably could be fixed but timeout buttons aren't meant to be shown after they complete so not
  * worried about it yet.
  */
-open class TimeoutButton @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
+open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     FrameLayout(context, attrs, defStyle) {
     /** the current path being used */
     private var path: Path? = null
@@ -63,9 +65,9 @@ open class TimeoutButton @JvmOverloads constructor(context: Context, attrs: Attr
 
         // get attributes
         val paintColor: Int
-        context.obtainStyledAttributes(attrs, R.styleable.TimeoutButton, 0, 0).apply {
-            paintColor = getColor(R.styleable.TimeoutButton_progressColor, DEFAULT_COLOR)
-            val padding = getDimension(R.styleable.TimeoutButton_progressPadding, PADDING_UNDEFINED)
+        context.obtainStyledAttributes(attrs, R.styleable.TimeoutWrapper, 0, 0).apply {
+            paintColor = getColor(R.styleable.TimeoutWrapper_progressColor, DEFAULT_COLOR)
+            val padding = getDimension(R.styleable.TimeoutWrapper_progressPadding, PADDING_UNDEFINED)
             if (padding != PADDING_UNDEFINED) {
                 progressPadTop = padding
                 progressPadLeft = padding
@@ -73,22 +75,22 @@ open class TimeoutButton @JvmOverloads constructor(context: Context, attrs: Attr
                 progressPadBottom = padding
             } else {
                 // check for individual padding
-                progressPadTop = getDimension(R.styleable.TimeoutButton_progressPaddingTop, DEFAULT_PADDING)
-                progressPadLeft = getDimension(R.styleable.TimeoutButton_progressPaddingLeft, DEFAULT_PADDING)
-                progressPadRight = getDimension(R.styleable.TimeoutButton_progressPaddingRight, DEFAULT_PADDING)
-                progressPadBottom = getDimension(R.styleable.TimeoutButton_progressPaddingBottom, DEFAULT_PADDING)
+                progressPadTop = getDimension(R.styleable.TimeoutWrapper_progressPaddingTop, DEFAULT_PADDING)
+                progressPadLeft = getDimension(R.styleable.TimeoutWrapper_progressPaddingLeft, DEFAULT_PADDING)
+                progressPadRight = getDimension(R.styleable.TimeoutWrapper_progressPaddingRight, DEFAULT_PADDING)
+                progressPadBottom = getDimension(R.styleable.TimeoutWrapper_progressPaddingBottom, DEFAULT_PADDING)
             }
-            progressRadius = getDimension(R.styleable.TimeoutButton_progressRadius, DEFAULT_RADIUS)
-            animationDurationMs = getInteger(R.styleable.TimeoutButton_progressAnimationDurationMs, DEFAULT_ANIMATION_DURATION)
-            decelerateFactor = getFloat(R.styleable.TimeoutButton_progressDecelerateFactor, DEFAULT_DECEL_FACTOR)
-            progressStrokeWidth = getDimension(R.styleable.TimeoutButton_progressStrokeWidth, DEFAULT_STROKE_WIDTH)
+            progressRadius = getDimension(R.styleable.TimeoutWrapper_progressRadius, DEFAULT_RADIUS)
+            animationDurationMs = getInteger(R.styleable.TimeoutWrapper_progressAnimationDurationMs, DEFAULT_ANIMATION_DURATION)
+            decelerateFactor = getFloat(R.styleable.TimeoutWrapper_progressDecelerateFactor, DEFAULT_DECEL_FACTOR)
+            progressStrokeWidth = getDimension(R.styleable.TimeoutWrapper_progressStrokeWidth, DEFAULT_STROKE_WIDTH)
 
             recycle()
         }
 
         paint = Paint().apply {
             color = paintColor
-            strokeWidth = this@TimeoutButton.progressStrokeWidth
+            strokeWidth = this@TimeoutWrapper.progressStrokeWidth
             style = Paint.Style.STROKE
             isAntiAlias = true
 //            maskFilter = BlurMaskFilter(BLUR_RADIUS, BlurMaskFilter.Blur.NORMAL)
@@ -128,8 +130,8 @@ open class TimeoutButton @JvmOverloads constructor(context: Context, attrs: Attr
     fun reset() {
         animator?.cancel()
         animator = ObjectAnimator.ofFloat(this, "phase", 1.0f, 0.0f).apply {
-            duration = this@TimeoutButton.animationDurationMs.toLong()
-            interpolator = DecelerateInterpolator(this@TimeoutButton.decelerateFactor)
+            duration = this@TimeoutWrapper.animationDurationMs.toLong()
+            interpolator = DecelerateInterpolator(this@TimeoutWrapper.decelerateFactor)
         }
     }
 
