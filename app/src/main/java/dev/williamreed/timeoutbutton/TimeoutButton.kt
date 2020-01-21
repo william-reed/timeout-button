@@ -8,13 +8,21 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
+import androidx.annotation.Keep
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 
 /**
  * Timeout Button
  *
- * Expects a button as a child view
+ * Expects a button as a child view. Note this view iteself is _not_ a button. It expects a child
+ * to be a button. This view simply facilitates drawing the progress animation over (or under) the
+ * button.
+ *
+ * The progress animation draws over the button if the button is not pressed. If the animation is
+ * complete the progress animation stays in whatever state it was in prior to completing. This
+ * probably could be fixed but timeout buttons aren't meant to be shown after they complete so not
+ * worried about it yet.
  */
 open class TimeoutButton @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     FrameLayout(context, attrs, defStyle) {
@@ -27,7 +35,7 @@ open class TimeoutButton @JvmOverloads constructor(context: Context, attrs: Attr
     private var sized = false
     /** has the view been started yet? can't start with size */
     private var started = false
-    private var animator: ObjectAnimator
+    private var animator: ObjectAnimator? = null
 
     /** if we have a button as a child keep it here */
     private var buttonChild: Button? = null
@@ -85,11 +93,6 @@ open class TimeoutButton @JvmOverloads constructor(context: Context, attrs: Attr
             isAntiAlias = true
 //            maskFilter = BlurMaskFilter(BLUR_RADIUS, BlurMaskFilter.Blur.NORMAL)
         }
-
-        animator = ObjectAnimator.ofFloat(this@TimeoutButton, "phase", 1.0f, 0.0f).apply {
-            duration = this@TimeoutButton.animationDurationMs.toLong()
-            interpolator = DecelerateInterpolator(this@TimeoutButton.decelerateFactor)
-        }
     }
 
     @ColorInt
@@ -104,13 +107,14 @@ open class TimeoutButton @JvmOverloads constructor(context: Context, attrs: Attr
      * Start the animation
      */
     fun start() {
+        if (started && sized) reset()
         started = true
         if (!sized) return
 
         // Measure the path
         val measure = PathMeasure(path, false)
         length = measure.length
-        animator.start()
+        animator?.start()
 
         buttonChild = children.firstOrNull { it is Button } as Button?
 
@@ -119,9 +123,21 @@ open class TimeoutButton @JvmOverloads constructor(context: Context, attrs: Attr
     }
 
     /**
+     * Reset the progress animation
+     */
+    fun reset() {
+        animator?.cancel()
+        animator = ObjectAnimator.ofFloat(this, "phase", 1.0f, 0.0f).apply {
+            duration = this@TimeoutButton.animationDurationMs.toLong()
+            interpolator = DecelerateInterpolator(this@TimeoutButton.decelerateFactor)
+        }
+    }
+
+    /**
      * Called by [ObjectAnimator]
      */
     @Suppress("unused")
+    @Keep
     fun setPhase(phase: Float) {
         paint.pathEffect = createPathEffect(length, phase)
         invalidate() // will call onDraw
@@ -131,6 +147,9 @@ open class TimeoutButton @JvmOverloads constructor(context: Context, attrs: Attr
         path?.let { path -> c.drawPath(path, paint) }
     }
 
+    /**
+     * Draw the progress over or under the button depending on the state of the button
+     */
     override fun dispatchDraw(canvas: Canvas?) {
         // draw under?
         buttonChild?.let { button ->
@@ -138,8 +157,10 @@ open class TimeoutButton @JvmOverloads constructor(context: Context, attrs: Attr
                 canvas?.let { drawPath(it) }
             }
         }
+
         // draw children
         super.dispatchDraw(canvas)
+
         // draw over
         buttonChild?.let { button ->
             if (!button.isPressed) {
@@ -150,8 +171,10 @@ open class TimeoutButton @JvmOverloads constructor(context: Context, attrs: Attr
 
     override fun onSizeChanged(xNew: Int, yNew: Int, xOld: Int, yOld: Int) {
         super.onSizeChanged(xNew, yNew, xOld, yOld)
-        path = createPath(width.toFloat() - paddingLeft - paddingRight - progressPadLeft - progressPadRight,
-            height.toFloat() - paddingTop - paddingBottom - progressPadTop - progressPadBottom)
+        path = createPath(
+            width.toFloat() - paddingLeft - paddingRight - progressPadLeft - progressPadRight,
+            height.toFloat() - paddingTop - paddingBottom - progressPadTop - progressPadBottom
+        )
 
         sized = true
         if (started) {
@@ -206,9 +229,9 @@ open class TimeoutButton @JvmOverloads constructor(context: Context, attrs: Attr
         const val PADDING_UNDEFINED = -1F
         const val DEFAULT_PADDING = 0F
         const val DEFAULT_ANIMATION_DURATION = 5_000
-        val DEFAULT_RADIUS = AndroidUtils.dpToPixels(2.5F)
         const val DEFAULT_DECEL_FACTOR = 1.1F
+        const val DEFAULT_COLOR = Color.RED
+        val DEFAULT_RADIUS = AndroidUtils.dpToPixels(2.5F)
         val DEFAULT_STROKE_WIDTH = AndroidUtils.dpToPixels(3F)
-        val DEFAULT_COLOR = Color.RED
     }
 }
