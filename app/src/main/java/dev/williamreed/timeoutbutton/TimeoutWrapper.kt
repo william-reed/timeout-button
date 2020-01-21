@@ -9,8 +9,11 @@ import android.widget.Button
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.Keep
+import androidx.core.animation.doOnCancel
+import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import io.reactivex.subjects.PublishSubject
 
 /**
  * Timeout Wrapper
@@ -37,6 +40,8 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
     private var sized = false
     /** has the view been started yet? can't start with size */
     private var started = false
+    /** has the animation been cancelled? don't notify the timeoutOccurred if it has */
+    private var canceled = false
     private var animator: ObjectAnimator? = null
 
     /** if we have a button as a child keep it here */
@@ -58,6 +63,11 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
     var decelerateFactor: Float
     /** stroke in pixels */
     var progressStrokeWidth: Float
+
+    /**
+     * Gets triggered when the progress / timeout animation is complete
+     */
+    val timeoutOccurred = PublishSubject.create<Unit>()
 
     init {
         // change some settings to get button shadows properly
@@ -106,17 +116,20 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
         }
 
     /**
-     * Start the animation
+     * Start the animation. If it is already running, it is cleared
      */
     fun start() {
         if (started && sized) reset()
         started = true
         if (!sized) return
+        canceled = false
 
         // Measure the path
         val measure = PathMeasure(path, false)
         length = measure.length
         animator?.start()
+        animator?.doOnCancel { canceled = true }
+        animator?.doOnEnd { if (!canceled) timeoutOccurred.onNext(Unit) }
 
         buttonChild = children.firstOrNull { it is Button } as Button?
 
@@ -129,7 +142,7 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
      */
     fun reset() {
         animator?.cancel()
-        animator = ObjectAnimator.ofFloat(this, "phase", 1.0f, 0.0f).apply {
+        animator = ObjectAnimator.ofFloat(this, "phase", PHASE_START, PHASE_END).apply {
             duration = this@TimeoutWrapper.animationDurationMs.toLong()
             interpolator = DecelerateInterpolator(this@TimeoutWrapper.decelerateFactor)
         }
@@ -235,5 +248,8 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
         const val DEFAULT_COLOR = Color.RED
         val DEFAULT_RADIUS = AndroidUtils.dpToPixels(2.5F)
         val DEFAULT_STROKE_WIDTH = AndroidUtils.dpToPixels(3F)
+
+        private const val PHASE_START = 1F
+        private const val PHASE_END = 0F
     }
 }

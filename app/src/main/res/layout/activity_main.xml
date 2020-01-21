@@ -8,7 +8,7 @@
         android:id="@+id/timeout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:progressAnimationDurationMs="10000"
+        app:progressAnimationDurationMs="5000"
         app:progressColor="@color/dark_gray"
         android:layout_gravity="center">
 
@@ -17,5 +17,12 @@
             android:layout_height="wrap_content"
             android:text="hello world" />
     </dev.williamreed.timeoutbutton.MaterialTimeoutWrapper>
+
+    <Button
+        android:id="@+id/reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="reset" />
 
 </FrameLayout>
