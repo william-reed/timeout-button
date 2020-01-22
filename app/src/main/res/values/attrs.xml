@@ -9,7 +9,6 @@
         <attr name="progressPaddingRight" format="dimension" />
         <attr name="progressRadius" format="dimension" />
         <attr name="progressAnimationDurationMs" format="integer" />
-        <attr name="progressDecelerateFactor" format="float" />
         <attr name="progressStrokeWidth" format="dimension" />
     </declare-styleable>
 </resources>

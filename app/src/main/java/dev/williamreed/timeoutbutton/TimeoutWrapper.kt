@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.Button
 import android.widget.FrameLayout
@@ -60,7 +61,6 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
     var progressRadius: Float
     /** duration in ms */
     var animationDurationMs: Int
-    var decelerateFactor: Float
     /** stroke in pixels */
     var progressStrokeWidth: Float
 
@@ -92,7 +92,6 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
             }
             progressRadius = getDimension(R.styleable.TimeoutWrapper_progressRadius, DEFAULT_RADIUS)
             animationDurationMs = getInteger(R.styleable.TimeoutWrapper_progressAnimationDurationMs, DEFAULT_ANIMATION_DURATION)
-            decelerateFactor = getFloat(R.styleable.TimeoutWrapper_progressDecelerateFactor, DEFAULT_DECEL_FACTOR)
             progressStrokeWidth = getDimension(R.styleable.TimeoutWrapper_progressStrokeWidth, DEFAULT_STROKE_WIDTH)
 
             recycle()
@@ -152,7 +151,7 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
         animator?.cancel()
         animator = ObjectAnimator.ofFloat(this, "phase", PHASE_START, PHASE_END).apply {
             duration = this@TimeoutWrapper.animationDurationMs.toLong()
-            interpolator = DecelerateInterpolator(this@TimeoutWrapper.decelerateFactor)
+            interpolator = AccelerateDecelerateInterpolator(context, null)
         }
         // manually set phase
         setPhase(PHASE_START)
@@ -254,7 +253,6 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
         const val PADDING_UNDEFINED = -1F
         const val DEFAULT_PADDING = 0F
         const val DEFAULT_ANIMATION_DURATION = 5_000
-        const val DEFAULT_DECEL_FACTOR = 1.1F
         const val DEFAULT_COLOR = Color.RED
         val DEFAULT_RADIUS = AndroidUtils.dpToPixels(2.5F)
         val DEFAULT_STROKE_WIDTH = AndroidUtils.dpToPixels(3F)

@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
         start.setOnClickListener { timeout.start() }
 
-        clear.setOnClickListener { timeout.reset() }
+        clear.setOnClickListener { timeout.clear() }
     }
 
     override fun onDestroy() {
