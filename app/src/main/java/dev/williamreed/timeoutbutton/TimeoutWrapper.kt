@@ -120,7 +120,7 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
      */
     fun start() {
         // if we are already running, reset it
-        if (started && sized) reset()
+        if (started && sized) clear()
 
         // reset state
         started = true
@@ -132,9 +132,11 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
         // Measure the path
         val measure = PathMeasure(path, false)
         length = measure.length
-        animator?.start()
-        animator?.doOnCancel { canceled = true }
-        animator?.doOnEnd { if (!canceled) timeoutOccurred.onNext(Unit) }
+        animator?.apply {
+            start()
+            doOnCancel { canceled = true }
+            doOnEnd { if (!canceled) timeoutOccurred.onNext(Unit) }
+        }
 
         buttonChild = children.firstOrNull { it is Button } as Button?
 
@@ -145,7 +147,7 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
     /**
      * Reset the progress animation
      */
-    fun reset() {
+    fun clear() {
         started = false
         animator?.cancel()
         animator = ObjectAnimator.ofFloat(this, "phase", PHASE_START, PHASE_END).apply {
