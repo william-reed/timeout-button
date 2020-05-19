@@ -106,6 +106,12 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        animator?.cancel()
+        animator = null
+    }
+
     @ColorInt
     var color: Int = ContextCompat.getColor(context, R.color.primaryDarkColor)
         set(value) {
