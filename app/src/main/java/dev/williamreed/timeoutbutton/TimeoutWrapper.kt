@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.DecelerateInterpolator
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
@@ -13,7 +12,6 @@ import androidx.annotation.Keep
 import androidx.core.animation.doOnCancel
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
 import io.reactivex.subjects.PublishSubject
 
 /**
@@ -46,7 +44,7 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
     private var animator: ObjectAnimator? = null
 
     /** if we have a button as a child keep it here */
-    private var buttonChild: Button? = null
+    private lateinit var buttonChild: Button
 
     /** padding in pixels */
     var progressPadTop: Float
@@ -64,9 +62,7 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
     /** stroke in pixels */
     var progressStrokeWidth: Float
 
-    /**
-     * Gets triggered when the progress / timeout animation is complete
-     */
+    /** Gets triggered when the progress / timeout animation is complete */
     val timeoutOccurred = PublishSubject.create<Unit>()
 
     init {
@@ -106,10 +102,23 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
+    override fun onViewAdded(child: View?) {
+        super.onViewAdded(child)
+
+        if (child !is Button) {
+            error("child is not button")
+        }
+        buttonChild = child
+    }
+
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         animator?.cancel()
         animator = null
+    }
+
+    override fun setOnClickListener(l: OnClickListener?) {
+        buttonChild.setOnClickListener(l)
     }
 
     @ColorInt
@@ -120,9 +129,7 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
             invalidate()
         }
 
-    /**
-     * Start the animation. If it is already running, it is cleared
-     */
+    /** Start the animation. If it is already running, it is cleared */
     fun start() {
         // if we are already running, reset it
         if (started && sized) clear()
@@ -143,15 +150,11 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
             doOnEnd { if (!canceled) timeoutOccurred.onNext(Unit) }
         }
 
-        buttonChild = children.firstOrNull { it is Button } as Button?
-
         // framelayouts don't normally draw
         setWillNotDraw(false)
     }
 
-    /**
-     * Reset the progress animation
-     */
+    /** Reset the progress animation */
     fun clear() {
         started = false
         animator?.cancel()
@@ -163,9 +166,7 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
         setPhase(PHASE_START)
     }
 
-    /**
-     * Called by [ObjectAnimator]
-     */
+    /** Called by [ObjectAnimator] */
     @Suppress("unused")
     @Keep
     fun setPhase(phase: Float) {
@@ -177,25 +178,19 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
         path?.let { path -> c.drawPath(path, paint) }
     }
 
-    /**
-     * Draw the progress over or under the button depending on the state of the button
-     */
+    /** Draw the progress over or under the button depending on the state of the button */
     override fun dispatchDraw(canvas: Canvas?) {
         // draw under?
-        buttonChild?.let { button ->
-            if (button.isPressed) {
-                canvas?.let { drawPath(it) }
-            }
+        if (started && buttonChild.isPressed) {
+            canvas?.let { drawPath(it) }
         }
 
         // draw children
         super.dispatchDraw(canvas)
 
         // draw over
-        buttonChild?.let { button ->
-            if (!button.isPressed) {
-                canvas?.let { drawPath(it) }
-            }
+        if (started && !buttonChild.isPressed) {
+            canvas?.let { drawPath(it) }
         }
     }
 
@@ -212,9 +207,7 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
-    /**
-     * Create the path the line / rectangle should follow
-     */
+    /** Create the path the line / rectangle should follow */
     private fun createPath(width: Float, height: Float): Path {
         // subtract stroke size so it can fit
         val w = width - progressStrokeWidth
@@ -238,9 +231,7 @@ open class TimeoutWrapper @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
-    /**
-     * Create the appropriate path effect combining the [CornerPathEffect] and [DashPathEffect]
-     */
+    /** Create the appropriate path effect combining the [CornerPathEffect] and [DashPathEffect] */
     private fun createPathEffect(
         pathLength: Float,
         phase: Float
